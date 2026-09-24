@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EventoFormRequest;
+use App\Http\Requests\StorePerguntaRequest;
 use App\Models\Evento;
 use App\Models\Pergunta;
-use App\Http\Requests\StorePerguntaRequest;
 
 class EventoController extends Controller
 {
@@ -24,6 +25,7 @@ class EventoController extends Controller
 
         $perguntas = Pergunta::with('user')
                     ->where('evento_id', $evento->getKey())
+                    ->where('is_public', true)
                     ->orderBy('created_at', 'desc')
                     ->paginate(10);
 
@@ -47,5 +49,18 @@ class EventoController extends Controller
 
         return redirect()->route('eventos.show', $evento->getKey())
             ->with('sucesso', 'Sua pergunta foi enviada com sucesso!');
+    }
+
+    public function create()
+    {
+        return view('eventos.create');
+    }
+
+    public function store(EventoFormRequest $request)
+    {
+        $evento = $request->user()->eventos()->create($request->validated());
+
+        return redirect()->route('eventos.show', $evento->getKey())
+            ->with('sucesso', 'Evento criado com sucesso!');
     }
 }
