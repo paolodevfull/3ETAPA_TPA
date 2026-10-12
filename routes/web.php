@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PerguntaController;
 use App\Http\Controllers\RegisterController;
 use Illuminate\Support\Facades\Route;
 
@@ -10,6 +11,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/eventos', [EventoController::class, 'store'])->name('eventos.store');
     Route::post('/eventos/{id}/perguntas', [EventoController::class, 'storePergunta'])
         ->name('eventos.perguntas.store');
+    Route::post('/perguntas/{pergunta}/votar', [PerguntaController::class, 'votar'])
+        ->name('perguntas.votar');
     Route::post('/logout', [LoginController::class, 'logout'])->name('auth.logout');
 });
 

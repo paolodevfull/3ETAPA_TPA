@@ -23,10 +23,12 @@ class EventoController extends Controller
         /** @var Evento $evento */
         $evento = Evento::findOrFail($id);
 
-        $perguntas = Pergunta::with('user')
+        $perguntas = Pergunta::with(['user', 'votos:id'])
+                    ->withCount('votos')
                     ->where('evento_id', $evento->getKey())
                     ->where('is_public', true)
-                    ->orderBy('created_at', 'desc')
+                    ->orderByDesc('votos_count')
+                    ->orderByDesc('created_at')
                     ->paginate(10);
 
         return view('eventos.show', compact('evento', 'perguntas'));

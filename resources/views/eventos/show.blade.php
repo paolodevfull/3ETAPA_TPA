@@ -39,6 +39,21 @@
             <div class="card mb-3 shadow-sm border-start border-4 border-primary">
                 <div class="card-body">
                     <p class="fs-5 mb-2 text-white">{{ $pergunta->texto }}</p>
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="badge bg-secondary">{{ $pergunta->votos_count }} votos</span>
+
+                        @auth
+                            @php($usuarioJaVotou = $pergunta->votos->contains(auth()->id()))
+                            <form action="{{ route('perguntas.votar', $pergunta) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-sm {{ $usuarioJaVotou ? 'btn-warning' : 'btn-outline-light' }}">
+                                    {{ $usuarioJaVotou ? 'Remover voto' : '▲ Upvote' }}
+                                </button>
+                            </form>
+                        @else
+                            <a href="{{ route('login') }}" class="btn btn-sm btn-outline-light">Entre para votar</a>
+                        @endauth
+                    </div>
                     <div class="d-flex justify-content-between align-items-center text-secondary small">
                         <span>👤 {{ $pergunta->user->name ?? 'Anônimo' }}</span>
                         <span>Status: <span class="badge bg-success">{{ $pergunta->status }}</span></span>
