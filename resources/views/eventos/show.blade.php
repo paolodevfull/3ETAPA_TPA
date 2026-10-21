@@ -32,7 +32,12 @@
     <div class="col-md-7">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="fw-bold m-0">📋 Perguntas do Evento</h4>
-            <span class="text-secondary small">Total no Banco: {{ $evento->perguntas->count() }}</span>
+            <div class="d-flex align-items-center gap-2">
+                <span class="text-secondary small">Total no Banco: {{ $evento->perguntas->count() }}</span>
+                @can('moderate', $evento)
+                    <a href="{{ route('eventos.moderacoes.index', $evento) }}" class="btn btn-sm btn-outline-warning">Fila de moderação</a>
+                @endcan
+            </div>
         </div>
 
         @forelse($perguntas as $pergunta)
@@ -54,6 +59,16 @@
                             <a href="{{ route('login') }}" class="btn btn-sm btn-outline-light">Entre para votar</a>
                         @endauth
                     </div>
+                    @auth
+                        <details class="mb-3">
+                            <summary class="text-secondary small">Reportar conteúdo impróprio</summary>
+                            <form action="{{ route('perguntas.moderar', $pergunta) }}" method="POST" class="mt-2">
+                                @csrf
+                                <textarea name="motivo" rows="2" maxlength="255" class="form-control form-control-sm" placeholder="Explique o motivo da denúncia (mínimo de 10 caracteres)."></textarea>
+                                <button type="submit" class="btn btn-sm btn-outline-warning mt-2">Enviar denúncia</button>
+                            </form>
+                        </details>
+                    @endauth
                     <div class="d-flex justify-content-between align-items-center text-secondary small">
                         <span>👤 {{ $pergunta->user->name ?? 'Anônimo' }}</span>
                         <span>Status: <span class="badge bg-success">{{ $pergunta->status }}</span></span>
